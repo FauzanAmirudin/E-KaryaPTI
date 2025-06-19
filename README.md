@@ -153,11 +153,6 @@ E-KaryaPTI adalah platform digital yang dirancang untuk menampilkan dan mengelol
 
 ### 🔑 Akun Default
 
-- **👑 Admin**:
-
-  - Email: admin@ekaryapti.com
-  - Password: admin123
-
 - **👤 Pengguna**:
   - Email: user@example.com
   - Password: user123
@@ -170,13 +165,12 @@ Aplikasi memiliki 3 level akses:
 
 1. **👀 Guest** - Pengunjung tanpa login
 2. **👤 User** - Pengguna terdaftar
-3. **👑 Admin** - Administrator dengan akses penuh
 
 ### 📤 Pengaturan Upload
 
 - File yang didukung: gambar, video, PDF, dokumen Office
 - Ukuran maksimum file: 10MB
-- Lokasi penyimpanan: `writable/uploads/`
+- Lokasi penyimpanan: `writable/uploads/ dan database`
 
 ### ��️ Maintenance Mode
 
@@ -225,19 +219,21 @@ chmod -R 755 writable/
 chmod -R 755 public/assets/images/
 ```
 
+## Tampilan WebSite
+
+![image](https://github.com/user-attachments/assets/26330d57-84e4-410c-8b21-f6694d5ccbd5)
+![image](https://github.com/user-attachments/assets/9887919a-2224-434d-a37e-5676568cccec)
+![image](https://github.com/user-attachments/assets/e1cef6f2-9d17-4f18-b029-41f779a37aa9)
+![image](https://github.com/user-attachments/assets/ef71fe50-d901-47e7-8c97-32ac06b0fc5a)
+
 ## 👥 Kontributor
 
-- 👨‍💻 Nama Developer
+- 👨‍💻 Developer
 - 🎓 Program Studi Pendidikan Teknologi Informasi
 - 🏛️ Universitas/Institusi
-
-## 📄 Lisensi
-
-[Sesuaikan dengan lisensi yang digunakan]
 
 ## 📞 Kontak
 
 Untuk pertanyaan atau dukungan, silakan hubungi:
 
-- ✉️ Email: contact@ekaryapti.com
-- 🌐 Website: https://ekaryapti.com
+- ✉️ Email: fauzan223360@gmail.com
