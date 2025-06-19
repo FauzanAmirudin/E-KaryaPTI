@@ -46,23 +46,6 @@ E-KaryaPTI adalah platform digital yang dirancang untuk menampilkan dan mengelol
    - Daftar karya yang telah diunggah
    - Edit informasi profil
 
-### 👑 Fitur Admin
-
-1. **🏷️ Manajemen Kategori**
-
-   - Tambah/edit/hapus kategori
-   - Mengatur status aktif/nonaktif kategori
-
-2. **👥 Manajemen Pengguna**
-
-   - Verifikasi pengguna baru
-   - Mengelola peran pengguna
-   - Menonaktifkan akun pengguna
-
-3. **🔍 Moderasi Konten**
-   - Review karya sebelum dipublikasikan
-   - Memilih karya unggulan untuk ditampilkan
-
 ## 🛠️ Teknologi yang Digunakan
 
 ### 🖥️ Backend
