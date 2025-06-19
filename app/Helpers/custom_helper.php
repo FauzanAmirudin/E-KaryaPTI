@@ -3,6 +3,135 @@
 /**
  * Custom helper functions for the application
  */
+if (!function_exists('renderWorkThumbnail')) {
+    function renderWorkThumbnail($work, $class = 'w-full h-full object-cover')
+    {
+        // Jika file upload langsung dan tipe file adalah image (jpg, png, dll)
+        if ($work['file_type'] === 'file' && !empty($work['file_path'])) {
+            $extension = strtolower(pathinfo($work['file_path'], PATHINFO_EXTENSION));
+            
+            // Untuk gambar (poster, foto), tampilkan gambar asli
+            if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'])) {
+                return '<img src="' . base_url('uploads/' . $work['file_path']) . '" 
+                             alt="' . esc($work['title']) . '"
+                             class="' . $class . '"
+                             loading="lazy">';
+            }
+            
+            // Untuk video, tampilkan poster frame
+            if (in_array($extension, ['mp4', 'avi', 'mov', 'wmv', 'webm'])) {
+                return '<div class="' . str_replace('object-cover', '', $class) . ' bg-gray-900 flex items-center justify-center relative">
+                            <video class="w-full h-full object-cover" preload="metadata" muted>
+                                <source src="' . base_url('uploads/' . $work['file_path']) . '#t=1">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                                <i class="fas fa-play-circle text-white text-3xl opacity-80"></i>
+                            </div>
+                        </div>';
+            }
+        }
+        
+        // Jika ada thumbnail dan bukan file gambar, gunakan thumbnail
+        if (!empty($work['thumbnail']) && ($work['file_type'] !== 'file' || !in_array(strtolower(pathinfo($work['file_path'] ?? '', PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']))) {
+            return '<img src="' . base_url('uploads/thumbnails/' . $work['thumbnail']) . '" 
+                         alt="' . esc($work['title']) . '"
+                         class="' . $class . '"
+                         loading="lazy">';
+        }
+        
+        // Jika link eksternal
+        if ($work['file_type'] === 'link' && !empty($work['external_link'])) {
+            return getLinkPreview($work, $class);
+        }
+        
+        // Default placeholder
+        return getWorkPlaceholder($work, $class);
+    }
+}
+
+if (!function_exists('getWorkPlaceholder')) {
+    function getWorkPlaceholder($work, $class = 'w-full h-full object-cover')
+    {
+        $categoryName = strtolower($work['category_name'] ?? '');
+        
+        $gradients = [
+            'poster' => 'from-purple-400 to-purple-600',
+            'video' => 'from-red-400 to-red-600', 
+            'pdf' => 'from-red-500 to-red-700',
+            'web' => 'from-blue-400 to-blue-600',
+            'foto' => 'from-green-400 to-green-600',
+            'aplikasi' => 'from-indigo-400 to-indigo-600',
+        ];
+        
+        $icons = [
+            'poster' => 'fas fa-image',
+            'video' => 'fas fa-video',
+            'pdf' => 'fas fa-file-pdf',
+            'web' => 'fas fa-globe',
+            'foto' => 'fas fa-camera',
+            'aplikasi' => 'fas fa-mobile-alt',
+        ];
+        
+        $gradient = $gradients[$categoryName] ?? 'from-primary-400 to-primary-600';
+        $icon = $icons[$categoryName] ?? 'fas fa-folder';
+        
+        $baseClass = str_replace('object-cover', '', $class);
+        
+        return '<div class="' . $baseClass . ' bg-gradient-to-br ' . $gradient . ' flex flex-col items-center justify-center text-white">
+                    <i class="' . $icon . ' text-3xl mb-1"></i>
+                    <span class="text-xs font-medium text-center px-2 leading-tight">' . esc($work['category_name']) . '</span>
+                </div>';
+    }
+}
+
+if (!function_exists('getLinkPreview')) {
+    function getLinkPreview($work, $class = 'w-full h-full object-cover')
+    {
+        $url = $work['external_link'];
+        $domain = parse_url($url, PHP_URL_HOST);
+        $baseClass = str_replace('object-cover', '', $class);
+        
+        // GitHub
+        if (strpos($domain, 'github.com') !== false) {
+            return '<div class="' . $baseClass . ' bg-gray-900 flex flex-col items-center justify-center text-white">
+                        <i class="fab fa-github text-4xl mb-2"></i>
+                        <span class="text-xs font-medium">GitHub</span>
+                    </div>';
+        }
+        
+        // YouTube
+        if (strpos($domain, 'youtube.com') !== false || strpos($domain, 'youtu.be') !== false) {
+            preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $url, $matches);
+            if (isset($matches[1])) {
+                $videoId = $matches[1];
+                return '<div class="' . $baseClass . ' relative">
+                            <img src="https://img.youtube.com/vi/' . $videoId . '/maxresdefault.jpg" 
+                                 alt="' . esc($work['title']) . '"
+                                 class="w-full h-full object-cover"
+                                 loading="lazy">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                                <i class="fab fa-youtube text-red-500 text-3xl"></i>
+                            </div>
+                        </div>';
+            }
+        }
+        
+        // Google Drive
+        if (strpos($domain, 'drive.google.com') !== false) {
+            return '<div class="' . $baseClass . ' bg-blue-500 flex flex-col items-center justify-center text-white">
+                        <i class="fab fa-google-drive text-4xl mb-2"></i>
+                        <span class="text-xs font-medium">Drive</span>
+                    </div>';
+        }
+        
+        // Default untuk link eksternal
+        return '<div class="' . $baseClass . ' bg-gradient-to-br from-blue-400 to-blue-600 flex flex-col items-center justify-center text-white">
+                    <i class="fas fa-external-link-alt text-3xl mb-1"></i>
+                    <span class="text-xs font-medium text-center px-2 leading-tight">' . $domain . '</span>
+                </div>';
+    }
+}
 
 if (!function_exists('formatBytes')) {
     function formatBytes($size, $precision = 2)
@@ -435,7 +564,21 @@ if (!function_exists('get_file_preview_url')) {
             }
         }
         
-        // If there's a thumbnail, use it (most common case)
+        // For image files, prioritize the original file
+        if (!empty($work['file_path'])) {
+            $extension = get_file_extension($work['file_path']);
+            if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'])) {
+                $filePath = WRITEPATH . 'uploads/' . $work['file_path'];
+                if (file_exists($filePath)) {
+                    $fileUrl = site_url('uploads/' . $work['file_path']);
+                    $debug .= "Using direct image URL: " . $fileUrl . "\n";
+                    file_put_contents($logPath, $debug, FILE_APPEND);
+                    return $fileUrl;
+                }
+            }
+        }
+        
+        // If there's a thumbnail, use it for non-image files
         if (!empty($work['thumbnail'])) {
             $thumbnailPath = WRITEPATH . 'uploads/thumbnails/' . $work['thumbnail'];
             $debug .= "Checking thumbnail: " . $thumbnailPath . " - Exists: " . (file_exists($thumbnailPath) ? 'Yes' : 'No') . "\n";
@@ -455,16 +598,6 @@ if (!function_exists('get_file_preview_url')) {
             
             $extension = get_file_extension($work['file_path']);
             $debug .= "File extension: " . $extension . "\n";
-            
-            // For images, use direct file URL
-            if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'])) {
-                if (file_exists($filePath)) {
-                    $fileUrl = site_url('uploads/' . $work['file_path']);
-                    $debug .= "Using direct image URL: " . $fileUrl . "\n";
-                    file_put_contents($logPath, $debug, FILE_APPEND);
-                    return $fileUrl;
-                }
-            }
             
             // For PDFs, return PDF icon or preview
             if ($extension === 'pdf') {

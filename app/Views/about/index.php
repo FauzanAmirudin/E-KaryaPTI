@@ -9,7 +9,7 @@
                 Tentang eKarya PTI
             </h1>
             <p class="text-xl text-primary-100 leading-relaxed">
-                Platform digital untuk mengapresiasi dan berbagi karya inovatif mahasiswa Program Teknologi Informasi
+                Platform digital untuk mengapresiasi dan berbagi karya inovatif mahasiswa Program Studi Pendidikan Teknologi Informasi
             </p>
         </div>
     </div>
@@ -249,8 +249,8 @@
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Alamat</h3>
                     <p class="text-gray-600 dark:text-gray-400">
-                        Jl. Pendidikan No. 123<br>
-                        Jakarta, Indonesia
+                    Gedung L, Gedong Meneng, Rajabasa<br>
+                    Bandar Lampung City, Lampung
                     </p>
                 </div>
             </div>

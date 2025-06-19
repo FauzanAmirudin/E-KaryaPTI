@@ -44,14 +44,6 @@ $routes->get('/kategori/(:segment)', 'CategoryController::show/$1');
 
 // About
 $routes->get('/tentang', function() {
-    // Debug info
-    echo "<h1>Debug Info - Halaman Tentang</h1>";
-    echo "<pre>";
-    echo "Current URL: " . current_url() . "<br>";
-    echo "Base URL: " . base_url() . "<br>";
-    echo "Site URL: " . site_url('/tentang') . "<br>";
-    echo "</pre>";
-    
     return view('about/index', ['title' => 'Tentang eKarya PTI']);
 });
 

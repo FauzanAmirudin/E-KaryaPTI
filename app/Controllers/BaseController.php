@@ -52,18 +52,21 @@ abstract class BaseController extends Controller
     protected function requireAuth()
     {
         if (!$this->isLoggedIn()) {
-            // Check if request is AJAX
-            if ($this->request->hasHeader('X-Requested-With') && $this->request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
-                return $this->response->setJSON(['error' => 'Authentication required'])->setStatusCode(401);
-            }
             return redirect()->to('/login')->with('error', 'Silakan login terlebih dahulu');
         }
-        return null;
+        return false;
     }
 
-    protected function jsonResponse($data, $statusCode = 200)
+    /**
+     * Return JSON response
+     *
+     * @param array $data Response data
+     * @param int $code HTTP status code
+     * @return \CodeIgniter\HTTP\Response
+     */
+    protected function jsonResponse($data, $code = 200)
     {
-        return $this->response->setJSON($data)->setStatusCode($statusCode);
+        return $this->response->setStatusCode($code)->setJSON($data);
     }
 
     protected function isAjaxRequest()

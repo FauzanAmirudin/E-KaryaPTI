@@ -82,6 +82,19 @@ class GalleryController extends BaseController
         $works = $builder->paginate($perPage, 'default', $page);
         $pager = $this->workModel->pager;
 
+        // Make sure we have all necessary data for rendering thumbnails
+        foreach ($works as &$work) {
+            // Convert description to string if it's an object
+            if (is_object($work['description'])) {
+                $work['description'] = (string)$work['description'];
+            }
+            
+            // Ensure views is a number
+            if (!isset($work['views']) || !is_numeric($work['views'])) {
+                $work['views'] = 0;
+            }
+        }
+
         return $this->jsonResponse([
             'works' => $works,
             'pagination' => $pager->links('default', 'custom_pagination'),

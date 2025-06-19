@@ -10,7 +10,7 @@
                     <span class="text-xl font-bold">eKarya PTI</span>
                 </div>
                 <p class="text-gray-300 mb-4 max-w-md">
-                    Platform galeri karya mahasiswa Program Teknologi Informasi. 
+                    Platform galeri karya mahasiswa Program Studi Pendidikan Teknologi Informasi. 
                     Tempat berbagi dan mengapresiasi karya-karya inovatif mahasiswa PTI.
                 </p>
                 <div class="flex space-x-4">
@@ -54,7 +54,7 @@
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-map-marker-alt mr-2 mt-1"></i>
-                        <span>Jl. Pendidikan No. 123<br>Jakarta, Indonesia</span>
+                        <span>Gedung L, Gedong Meneng, Rajabasa<br>Bandar Lampung City, Lampung 35141</span>
                     </li>
                 </ul>
             </div>

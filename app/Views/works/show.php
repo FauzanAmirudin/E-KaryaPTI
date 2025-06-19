@@ -300,58 +300,35 @@
 
         <!-- Related Works -->
         <?php if (!empty($relatedWorks)): ?>
-            <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Karya Terkait</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <?php foreach ($relatedWorks as $relatedWork): ?>
-                        <div class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                            <div class="relative h-32 overflow-hidden">
-                                <?php if ($relatedWork['file_type'] === 'link' && strpos($relatedWork['external_link'], 'youtube.com') !== false): ?>
-                                    <?php
-                                    $videoId = '';
-                                    parse_str(parse_url($relatedWork['external_link'], PHP_URL_QUERY), $params);
-                                    if (isset($params['v'])) {
-                                        $videoId = $params['v'];
-                                    }
-                                    ?>
-                                    <div class="embed-responsive-item">
-                                        <img src="https://img.youtube.com/vi/<?= $videoId ?>/mqdefault.jpg"
-                                             alt="<?= esc($relatedWork['title']) ?>"
-                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            <div class="bg-red-600 text-white rounded-full p-3 opacity-90">
-                                                <i class="fab fa-youtube text-xl"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php else: ?>
-                                    <img src="<?= get_thumbnail_url($relatedWork['thumbnail']) ?>"
-                                         alt="<?= esc($relatedWork['title']) ?>"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                <?php endif; ?>
-                                
-                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
-                                    <a href="<?= site_url('/karya/' . $relatedWork['slug']) ?>" 
-                                       class="bg-white text-gray-900 px-3 py-1 rounded font-medium opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 text-sm">
-                                        Lihat
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            <div class="p-3">
-                                <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1 line-clamp-2">
-                                    <?= esc($relatedWork['title']) ?>
-                                </h3>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">
-                                    <?= esc($relatedWork['user_name']) ?> • <?= $relatedWork['year'] ?>
-                                </p>
-                            </div>
+    <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Karya Terkait</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <?php foreach ($relatedWorks as $relatedWork): ?>
+                <div class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div class="relative h-32 overflow-hidden">
+                        <?= renderWorkThumbnail($relatedWork, 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300') ?>
+                        
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
+                            <a href="<?= base_url('/karya/' . $relatedWork['slug']) ?>" 
+                               class="bg-white text-gray-900 px-3 py-1 rounded font-medium opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 text-sm">
+                                Lihat
+                            </a>
                         </div>
-                    <?php endforeach; ?>
+                    </div>
+                    
+                    <div class="p-3">
+                        <h3 class="font-semibold text-gray-900 dark:text-white text-sm mb-1 line-clamp-2">
+                            <?= esc($relatedWork['title']) ?>
+                        </h3>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">
+                            <?= esc($relatedWork['user_name']) ?> • <?= $relatedWork['year'] ?>
+                        </p>
+                    </div>
                 </div>
-            </div>
-        <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
+<?php endif; ?>
 </div>
 <?= $this->endSection() ?>
 

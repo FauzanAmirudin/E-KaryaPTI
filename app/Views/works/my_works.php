@@ -92,8 +92,6 @@
             <!-- Empty State -->
             <div class="text-center py-16 px-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
                 <div class="max-w-md mx-auto">
-                    <img src="<?= site_url('assets/images/empty-works.svg') ?>" alt="No works" class="w-64 h-64 mx-auto mb-6 opacity-80">
-                    
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                         Belum Ada Karya
                     </h3>
@@ -111,184 +109,85 @@
             </div>
         <?php else: ?>
             <!-- Works Grid -->
-            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-0">
-                    Daftar Karya (<?= count($works) ?>)
-                </h2>
-                <div class="flex space-x-3">
-                    <select onchange="sortWorks(this.value)" 
-                            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm">
-                        <option value="newest">Terbaru</option>
-                        <option value="oldest">Terlama</option>
-                        <option value="title">Judul A-Z</option>
-                        <option value="views">Paling Dilihat</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="works-grid">
-                <?php foreach ($works as $work): ?>
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 work-card" 
-                         data-date="<?= $work['created_at'] ?>" 
-                         data-title="<?= esc($work['title']) ?>" 
-                         data-views="<?= $work['views'] ?>">
-                        <!-- Card Content -->
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden flex flex-col h-full">
-                            <!-- Thumbnail -->
-                            <div class="aspect-video overflow-hidden">
-                                <?php if ($work['file_type'] === 'link' && strpos($work['external_link'], 'youtube.com') !== false): ?>
-                                    <?php
-                                    $videoId = '';
-                                    parse_str(parse_url($work['external_link'], PHP_URL_QUERY), $params);
-                                    if (isset($params['v'])) {
-                                        $videoId = $params['v'];
-                                    }
-                                    ?>
-                                    <div class="embed-responsive-item">
-                                        <img src="https://img.youtube.com/vi/<?= $videoId ?>/mqdefault.jpg"
-                                             alt="<?= esc($work['title']) ?>"
-                                             class="w-full h-full object-cover">
-                                        <div class="absolute inset-0 flex items-center justify-center">
-                                            <div class="bg-red-600 text-white rounded-full p-3 opacity-90">
-                                                <i class="fab fa-youtube text-xl"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php else: ?>
-                                    <?php 
-                                    // Get file type info using helper function
-                                    $fileInfo = get_file_type_info($work['file_path'] ?? '');
-                                    $extension = get_file_extension($work['file_path'] ?? '');
-                                    
-                                    // Get appropriate preview URL
-                                    $previewUrl = get_file_preview_url($work);
-                                    
-                                    // Check if this is a video file
-                                    $isVideo = in_array($extension, ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv']);
-                                    
-                                    // Check if this is a PDF
-                                    $isPdf = ($extension === 'pdf');
-                                    
-                                    // Check if the file is an image without thumbnail
-                                    $isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp']) && empty($work['thumbnail']);
-                                    ?>
-                                    
-                                    <div class="relative w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700">
-                                        <!-- Show file icon with background if no thumbnail -->
-                                        <?php if (empty($work['thumbnail']) && !$isImage): ?>
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <div class="text-center">
-                                                    <div class="inline-block bg-white dark:bg-gray-700 p-3 rounded-full shadow-md mb-2">
-                                                        <i class="fas <?= $fileInfo['icon'] ?> <?= $fileInfo['color'] ?> text-3xl"></i>
-                                                    </div>
-                                                    <div class="text-xs font-medium text-gray-700 dark:text-gray-300"><?= $fileInfo['type'] ?></div>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-                                        
-                                        <!-- Show preview based on file type -->
-                                        <img src="<?= $previewUrl ?>"
-                                            alt="<?= esc($work['title']) ?>"
-                                            class="w-full h-full object-cover <?= (empty($work['thumbnail']) && !$isImage) ? 'opacity-0' : '' ?>"
-                                            onerror="this.onerror=null; this.classList.add('opacity-0');">
-                                        
-                                        <!-- Video play button if it's a video file -->
-                                        <?php if ($isVideo): ?>
-                                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                <div class="bg-black bg-opacity-50 text-white rounded-full p-4 shadow-lg">
-                                                    <i class="fas fa-play"></i>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-                                        
-                                        <!-- PDF indicator if it's a PDF file -->
-                                        <?php if ($isPdf): ?>
-                                            <div class="absolute bottom-2 right-2 bg-white dark:bg-gray-800 rounded-md px-2 py-1 shadow text-xs font-bold">
-                                                <i class="fas fa-file-pdf text-red-500 mr-1"></i> PDF
-                                            </div>
-                                        <?php endif; ?>
-                                        
-                                        <!-- File Type Indicator -->
-                                        <div class="absolute top-0 left-0 bg-black bg-opacity-70 text-white px-3 py-1 m-3 rounded-md text-xs font-medium">
-                                            <i class="fas <?= $fileInfo['icon'] ?> <?= $fileInfo['color'] ?> mr-1"></i>
-                                            <?= $fileInfo['type'] ?>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-
-                            <!-- Category Badge -->
-                            <div class="absolute top-3 right-3">
-                                <span class="bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
-                                    <?= esc($work['category_name']) ?>
-                                </span>
-                            </div>
-
-                            <!-- Status Badge -->
-                            <div class="absolute top-3 right-3">
-                                <?php if ($work['status'] === 'published'): ?>
-                                    <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-medium">
-                                        <i class="fas fa-check mr-1"></i>Published
-                                    </span>
-                                <?php elseif ($work['status'] === 'draft'): ?>
-                                    <span class="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">
-                                        <i class="fas fa-edit mr-1"></i>Draft
-                                    </span>
-                                <?php else: ?>
-                                    <span class="bg-gray-500 text-white px-2 py-1 rounded text-xs font-medium">
-                                        <i class="fas fa-archive mr-1"></i>Archived
-                                    </span>
-                                <?php endif; ?>
-                            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="works-grid">
+            <?php foreach ($works as $work): ?>
+                <div class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 work-card" 
+                     data-date="<?= $work['created_at'] ?>" 
+                     data-title="<?= esc($work['title']) ?>" 
+                     data-views="<?= $work['views'] ?>">
+                    <!-- Thumbnail -->
+                    <div class="relative h-48 overflow-hidden">
+                        <?= renderWorkThumbnail($work, 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300') ?>
+                        
+                        <!-- Category Badge -->
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
+                                <?= esc($work['category_name']) ?>
+                            </span>
                         </div>
 
-                        <!-- Content -->
-                        <div class="p-6">
-                            <h3 class="font-bold text-lg text-gray-900 dark:text-white mb-2 line-clamp-2">
-                                <?= esc($work['title']) ?>
-                            </h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
-                                <?= esc(substr($work['description'], 0, 120)) ?>...
-                            </p>
-
-                            <!-- Stats -->
-                            <div class="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
-                                <div class="flex items-center space-x-4">
-                                    <span class="flex items-center">
-                                        <i class="fas fa-eye mr-1"></i>
-                                        <?= number_format($work['views']) ?>
-                                    </span>
-                                    <span class="flex items-center">
-                                        <i class="fas fa-calendar mr-1"></i>
-                                        <?= $work['year'] ?>
-                                    </span>
-                                </div>
-                                <span class="text-xs">
-                                    <?= date('d M Y', strtotime($work['created_at'])) ?>
+                        <!-- Status Badge -->
+                        <div class="absolute top-3 right-3">
+                            <?php if ($work['status'] === 'published'): ?>
+                                <span class="bg-green-500 text-white px-2 py-1 rounded text-xs font-medium">
+                                    <i class="fas fa-check mr-1"></i>Published
                                 </span>
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="mt-4 flex justify-end space-x-2">
-                                <a href="<?= site_url('/karya/' . $work['slug']) ?>" 
-                                   class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
-                                    <i class="fas fa-eye mr-1.5"></i>
-                                    Lihat
-                                </a>
-                                <a href="<?= site_url('/karya/edit/' . $work['id']) ?>" 
-                                   class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
-                                    <i class="fas fa-edit mr-1.5"></i>
-                                    Edit
-                                </a>
-                                <button onclick="confirmDelete(<?= $work['id'] ?>)"
-                                        class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
-                                    <i class="fas fa-trash mr-1.5"></i>
-                                    Hapus
-                                </button>
-                            </div>
+                            <?php elseif ($work['status'] === 'draft'): ?>
+                                <span class="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">
+                                    <i class="fas fa-edit mr-1"></i>Draft
+                                </span>
+                            <?php else: ?>
+                                <span class="bg-gray-500 text-white px-2 py-1 rounded text-xs font-medium">
+                                    <i class="fas fa-archive mr-1"></i>Archived
+                                </span>
+                            <?php endif; ?>
                         </div>
                     </div>
-                <?php endforeach; ?>
+
+                    <!-- Content -->
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                            <?= esc($work['title']) ?>
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                            <?= esc(substr($work['description'], 0, 100)) ?>...
+                        </p>
+
+                        <!-- Stats -->
+                        <div class="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
+                            <div class="flex items-center space-x-4">
+                                <span class="flex items-center">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    <?= number_format($work['views']) ?>
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    <?= $work['year'] ?>
+                                </span>
+                            </div>
+                            <span class="text-xs">
+                                <?= date('d M Y', strtotime($work['created_at'])) ?>
+                            </span>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex space-x-2">
+                            <a href="<?= base_url('/karya/' . $work['slug']) ?>" 
+                               class="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center text-sm">
+                                <i class="fas fa-eye mr-1"></i>Lihat
+                            </a>
+                            <a href="<?= base_url('/karya/edit/' . $work['id']) ?>" 
+                               class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center text-sm">
+                                <i class="fas fa-edit mr-1"></i>Edit
+                            </a>
+                            <button onclick="confirmDelete(<?= $work['id'] ?>)"
+                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg font-medium transition-colors text-sm">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
             </div>
 
             <!-- Pagination -->
@@ -345,11 +244,16 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', function()
 });
 
 function deleteWork(workId) {
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const csrfHeader = document.querySelector('meta[name="csrf-header"]')?.getAttribute('content') || 'X-CSRF-TOKEN';
+    
     fetch(`<?= site_url('/karya/delete/') ?>${workId}`, {
         method: 'DELETE',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrfToken
         }
     })
     .then(response => response.json())
@@ -357,18 +261,20 @@ function deleteWork(workId) {
         closeDeleteModal();
         if (data.success) {
             // Show success message
-            alert('Karya berhasil dihapus');
-            // Reload the page
-            window.location.reload();
+            showNotification('Karya berhasil dihapus', 'success');
+            // Reload the page after a short delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } else {
             // Show error message
-            alert('Gagal menghapus karya: ' + (data.error || 'Terjadi kesalahan'));
+            showNotification('Gagal menghapus karya: ' + (data.error || 'Terjadi kesalahan'), 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         closeDeleteModal();
-        alert('Terjadi kesalahan saat menghapus karya');
+        showNotification('Terjadi kesalahan saat menghapus karya', 'error');
     });
 }
 

@@ -7,7 +7,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 class="text-3xl md:text-4xl font-bold mb-4">Galeri Karya</h1>
             <p class="text-xl text-primary-100">
-                Jelajahi koleksi lengkap karya mahasiswa Program Teknologi Informasi
+                Jelajahi koleksi lengkap karya mahasiswa Program Studi Pendidikan Teknologi Informasi
             </p>
         </div>
     </div>
@@ -80,10 +80,10 @@
                             <option value="year">Tahun</option>
                         </select>
                     </div>
-                    <button @click="resetFilters()" 
+                    <!-- <button @click="resetFilters()" 
                             class="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium">
                         <i class="fas fa-undo mr-1"></i>Reset Filter
-                    </button>
+                    </button> -->
                 </div>
                 
                 <div class="flex items-center space-x-2 mt-4 sm:mt-0">
@@ -119,6 +119,163 @@
 <script>
 function galleryFilters() {
     return {
+        renderWorkThumbnailJS(work) {
+    // Jika file upload langsung dan tipe file adalah image (jpg, png, dll)
+    if (work.file_type === 'file' && work.file_path) {
+        const extension = work.file_path.split('.').pop().toLowerCase();
+        const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+        const videoExts = ['mp4', 'avi', 'mov', 'wmv', 'webm', 'flv', 'mkv'];
+        
+        // Untuk gambar (poster, foto), tampilkan gambar asli
+        if (imageExts.includes(extension)) {
+            return `<img src="<?= base_url('uploads/') ?>${work.file_path}" 
+                         alt="${work.title}"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                         loading="lazy">`;
+        }
+        
+        // Untuk video, tampilkan poster frame
+        if (videoExts.includes(extension)) {
+            return `<div class="w-full h-full bg-gray-900 flex items-center justify-center relative">
+                        <video class="w-full h-full object-cover" preload="metadata" muted>
+                            <source src="<?= base_url('uploads/') ?>${work.file_path}#t=1">
+                        </video>
+                        <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                            <i class="fas fa-play-circle text-white text-3xl opacity-80"></i>
+                        </div>
+                    </div>`;
+        }
+        
+        // PDF preview
+        if (extension === 'pdf') {
+            return `<div class="w-full h-full flex items-center justify-center">
+                        <img src="<?= base_url('assets/images/pdf-preview.jpg') ?>" 
+                             alt="${work.title}"
+                             class="w-full h-full object-cover"
+                             loading="lazy">
+                    </div>`;
+        }
+        
+        // Document previews
+        if (['doc', 'docx'].includes(extension)) {
+            return `<div class="w-full h-full flex items-center justify-center">
+                        <img src="<?= base_url('assets/images/doc-preview.jpg') ?>" 
+                             alt="${work.title}"
+                             class="w-full h-full object-cover"
+                             loading="lazy">
+                    </div>`;
+        }
+        
+        if (['xls', 'xlsx'].includes(extension)) {
+            return `<div class="w-full h-full flex items-center justify-center">
+                        <img src="<?= base_url('assets/images/excel-preview.jpg') ?>" 
+                             alt="${work.title}"
+                             class="w-full h-full object-cover"
+                             loading="lazy">
+                    </div>`;
+        }
+        
+        if (['ppt', 'pptx'].includes(extension)) {
+            return `<div class="w-full h-full flex items-center justify-center">
+                        <img src="<?= base_url('assets/images/ppt-preview.jpg') ?>" 
+                             alt="${work.title}"
+                             class="w-full h-full object-cover"
+                             loading="lazy">
+                    </div>`;
+        }
+    }
+    
+    // Jika ada thumbnail dan bukan file gambar, gunakan thumbnail
+    if (work.thumbnail) {
+        const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+        const hasImageFile = work.file_type === 'file' && work.file_path && imageExts.includes(work.file_path.split('.').pop().toLowerCase());
+        
+        // Jika bukan file gambar, gunakan thumbnail
+        if (!hasImageFile) {
+            return `<img src="<?= base_url('uploads/thumbnails/') ?>${work.thumbnail}" 
+                         alt="${work.title}"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                         loading="lazy">`;
+        }
+    }
+    
+    // Jika link eksternal
+    if (work.file_type === 'link' && work.external_link) {
+        return this.getLinkPreviewJS(work);
+    }
+    
+    // Default placeholder
+    return this.getWorkPlaceholderJS(work);
+},
+
+getWorkPlaceholderJS(work) {
+    const categoryName = work.category_name.toLowerCase();
+    const gradients = {
+        'poster': 'from-purple-400 to-purple-600',
+        'video': 'from-red-400 to-red-600',
+        'pdf': 'from-red-500 to-red-700',
+        'web': 'from-blue-400 to-blue-600',
+        'foto': 'from-green-400 to-green-600',
+        'aplikasi': 'from-indigo-400 to-indigo-600'
+    };
+    
+    const icons = {
+        'poster': 'fas fa-image',
+        'video': 'fas fa-video',
+        'pdf': 'fas fa-file-pdf',
+        'web': 'fas fa-globe',
+        'foto': 'fas fa-camera',
+        'aplikasi': 'fas fa-mobile-alt'
+    };
+    
+    const gradient = gradients[categoryName] || 'from-primary-400 to-primary-600';
+    const icon = icons[categoryName] || 'fas fa-folder';
+    
+    return `<div class="w-full h-full bg-gradient-to-br ${gradient} flex flex-col items-center justify-center text-white">
+                <i class="${icon} text-3xl mb-1"></i>
+                <span class="text-xs font-medium text-center px-2 leading-tight">${work.category_name}</span>
+            </div>`;
+},
+
+getLinkPreviewJS(work) {
+    const url = work.external_link;
+    
+    if (url.includes('github.com')) {
+        return `<div class="w-full h-full bg-gray-900 flex flex-col items-center justify-center text-white">
+                    <i class="fab fa-github text-4xl mb-2"></i>
+                    <span class="text-xs font-medium">GitHub</span>
+                </div>`;
+    }
+    
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        const videoIdMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+        if (videoIdMatch) {
+            const videoId = videoIdMatch[1];
+            return `<div class="w-full h-full relative">
+                        <img src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" 
+                             alt="${work.title}"
+                             class="w-full h-full object-cover"
+                             loading="lazy">
+                        <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                            <i class="fab fa-youtube text-red-500 text-3xl"></i>
+                        </div>
+                    </div>`;
+        }
+    }
+    
+    if (url.includes('drive.google.com')) {
+        return `<div class="w-full h-full bg-blue-500 flex flex-col items-center justify-center text-white">
+                    <i class="fab fa-google-drive text-4xl mb-2"></i>
+                    <span class="text-xs font-medium">Drive</span>
+                </div>`;
+    }
+    
+    const domain = new URL(url).hostname;
+    return `<div class="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex flex-col items-center justify-center text-white">
+                <i class="fas fa-external-link-alt text-3xl mb-1"></i>
+                <span class="text-xs font-medium text-center px-2 leading-tight">${domain}</span>
+            </div>`;
+},
         filters: {
             search: '<?= $filters['search'] ?? '' ?>',
             category: '<?= $filters['category'] ?? '' ?>',
@@ -144,6 +301,7 @@ function galleryFilters() {
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Filter response data:', data);
                 document.getElementById('works-container').innerHTML = this.renderWorksGrid(data.works);
                 document.getElementById('pagination-container').innerHTML = data.pagination || '';
                 document.getElementById('results-count').textContent = `Menampilkan ${data.works.length} dari ${data.total} karya`;
@@ -207,27 +365,10 @@ function galleryFilters() {
         },
         
         renderWorkCard(work) {
-            // Handle thumbnail display
-            let thumbnailUrl = work.thumbnail
-                ? `<?= site_url('uploads/thumbnails/') ?>${work.thumbnail}`
-                : '<?= site_url('assets/images/no-image.jpg') ?>';
-            
-            // If YouTube link, use YouTube thumbnail
-            if (work.external_link && work.external_link.includes('youtube.com')) {
-                const params = new URLSearchParams(new URL(work.external_link).search);
-                const videoId = params.get('v');
-                if (videoId) {
-                    thumbnailUrl = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-                }
-            }
-
             return `
                 <div class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <div class="relative h-48 overflow-hidden">
-                        <img src="${thumbnailUrl}" 
-                             alt="${work.title}"
-                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                             onerror="this.src='<?= site_url('assets/images/no-image.jpg') ?>'">
+                        ${this.renderWorkThumbnailJS(work)}
                         
                         <div class="absolute top-3 left-3">
                             <span class="bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">

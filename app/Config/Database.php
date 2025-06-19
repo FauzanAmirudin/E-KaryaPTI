@@ -20,13 +20,38 @@ class Database extends Config
     public string $defaultGroup = 'default';
 
     /**
-     * The default database connection using SQLite.
+     * The default database connection.
      *
      * @var array<string, mixed>
      */
     public array $default = [
         'DSN'          => '',
-        'hostname'     => '',
+        'hostname'     => '127.0.0.1',
+        'username'     => 'root',
+        'password'     => '',  // Assuming no password for Laragon MySQL
+        'database'     => 'ekarya_pti',
+        'DBDriver'     => 'MySQLi',
+        'DBPrefix'     => '',
+        'pConnect'     => false,
+        'DBDebug'      => true,
+        'charset'      => 'utf8',
+        'DBCollat'     => 'utf8_general_ci',
+        'swapPre'      => '',
+        'encrypt'      => false,
+        'compress'     => false,
+        'strictOn'     => false,
+        'failover'     => ['sqlite'],
+        'port'         => 3306,
+    ];
+
+    /**
+     * SQLite database connection as failover.
+     *
+     * @var array<string, mixed>
+     */
+    public array $sqlite = [
+        'DSN'          => '',
+        'hostname'     => 'localhost',
         'username'     => '',
         'password'     => '',
         'database'     => ROOTPATH . 'writable/database/database.db',

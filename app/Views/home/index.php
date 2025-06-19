@@ -9,7 +9,7 @@
             <span class="text-yellow-300">Karya Mahasiswa PTI</span>
         </h1>
         <p class="text-xl md:text-2xl mb-8 text-gray-200 max-w-3xl mx-auto">
-            Platform galeri karya mahasiswa Program Teknologi Informasi. 
+            Platform galeri karya mahasiswa Proram Studi PendidikanTeknologi Informasi. 
             Eksplorasi berbagai karya inovatif dari poster, video, aplikasi web hingga karya fotografi.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -28,106 +28,59 @@
 </section>
 
 <!-- Featured Works Carousel -->
-<?php if (!empty($featuredWorks)): ?>
-<section class="py-16 bg-white dark:bg-gray-900">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Karya Unggulan
-            </h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Karya-karya terpilih yang menunjukkan kreativitas dan inovasi terbaik mahasiswa PTI
-            </p>
-        </div>
-        
-        <div class="relative" x-data="carousel()">
-            <div class="overflow-hidden rounded-xl">
-                <div class="flex transition-transform duration-500 ease-in-out" :style="`transform: translateX(-${currentSlide * 100}%)`">
-                    <?php foreach ($featuredWorks as $work): ?>
-                        <div class="w-full flex-shrink-0">
-                            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                                    <!-- Image/Preview -->
-                                    <div class="relative h-64 lg:h-96">
-                                        <?php if ($work['thumbnail']): ?>
-                                            <img src="<?= get_thumbnail_url($work['thumbnail']) ?>" 
-                                                 alt="<?= esc($work['title']) ?>"
-                                                 class="w-full h-full object-cover">
-                                        <?php else: ?>
-                                            <div class="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-                                                <i class="fas fa-image text-white text-6xl"></i>
-                                            </div>
-                                        <?php endif; ?>
-                                        <div class="absolute top-4 left-4">
-                                            <span class="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                                <?= esc($work['category_name']) ?>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Content -->
-                                    <div class="p-8 flex flex-col justify-center">
-                                        <h3 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                                            <?= esc($work['title']) ?>
-                                        </h3>
-                                        <p class="text-gray-600 dark:text-gray-400 mb-6 line-clamp-3">
-                                            <?= esc(substr($work['description'], 0, 200)) ?>...
-                                        </p>
-                                        <div class="flex items-center justify-between mb-6">
-                                            <div class="flex items-center space-x-2">
-                                                <div class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
-                                                    <span class="text-white text-sm font-medium">
-                                                        <?= strtoupper(substr($work['user_name'], 0, 1)) ?>
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                                        <?= esc($work['user_name']) ?>
-                                                    </p>
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                        <?= $work['year'] ?>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-center text-gray-500 dark:text-gray-400 text-sm">
-                                                <i class="fas fa-eye mr-1"></i>
-                                                <?= number_format($work['views']) ?>
-                                            </div>
-                                        </div>
-                                        <a href="<?= site_url('/karya/' . $work['slug']) ?>" 
-                                           class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center justify-center">
-                                            <i class="fas fa-eye mr-2"></i>
-                                            Lihat Detail
-                                        </a>
-                                    </div>
-                                </div>
+<?php foreach ($featuredWorks as $work): ?>
+    <div class="w-full flex-shrink-0">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                <!-- Image/Preview -->
+                <div class="relative h-64 lg:h-96">
+                    <?= renderWorkThumbnail($work, 'w-full h-full object-cover') ?>
+                    <div class="absolute top-4 left-4">
+                        <span class="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                            <?= esc($work['category_name']) ?>
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Content tetap sama -->
+                <div class="p-8 flex flex-col justify-center">
+                    <h3 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                        <?= esc($work['title']) ?>
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6 line-clamp-3">
+                        <?= esc(substr($work['description'], 0, 200)) ?>...
+                    </p>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm font-medium">
+                                    <?= strtoupper(substr($work['user_name'], 0, 1)) ?>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                    <?= esc($work['user_name']) ?>
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    <?= $work['year'] ?>
+                                </p>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+                        <div class="flex items-center text-gray-500 dark:text-gray-400 text-sm">
+                            <i class="fas fa-eye mr-1"></i>
+                            <?= number_format($work['views']) ?>
+                        </div>
+                    </div>
+                    <a href="<?= base_url('/karya/' . $work['slug']) ?>" 
+                       class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center justify-center">
+                        <i class="fas fa-eye mr-2"></i>
+                        Lihat Detail
+                    </a>
                 </div>
-            </div>
-            
-            <!-- Navigation Arrows -->
-            <button @click="prevSlide()" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button @click="nextSlide()" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-            
-            <!-- Dots Indicator -->
-            <div class="flex justify-center mt-6 space-x-2">
-                <?php for ($i = 0; $i < count($featuredWorks); $i++): ?>
-                    <button @click="currentSlide = <?= $i ?>" 
-                            class="w-3 h-3 rounded-full transition-colors"
-                            :class="currentSlide === <?= $i ?> ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'">
-                    </button>
-                <?php endfor; ?>
             </div>
         </div>
     </div>
-</section>
-<?php endif; ?>
+<?php endforeach; ?>
 
 <!-- Categories Section -->
 <section class="py-16 bg-gray-50 dark:bg-gray-800">
@@ -181,36 +134,20 @@
 <?php if (!empty($latestWorks)): ?>
 <section class="py-16 bg-white dark:bg-gray-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col sm:flex-row justify-between items-center mb-12">
-            <div>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                    Karya Terbaru
-                </h2>
-                <p class="text-gray-600 dark:text-gray-400">
-                    Karya-karya terbaru yang baru saja diunggah oleh mahasiswa PTI
-                </p>
-            </div>
-            <a href="<?= site_url('/galeri') ?>" 
-               class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center mt-4 sm:mt-0">
-                Lihat Semua
-                <i class="fas fa-arrow-right ml-2"></i>
-            </a>
+    <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Jelajahi Karya Terbaru
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Temukan karya terbaru dari mahasiswa Pendidikan Teknologi Informasi
+            </p>
         </div>
-        
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <?php foreach ($latestWorks as $work): ?>
-                <div class="group bg-gray-50 dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div class="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <!-- Thumbnail -->
                     <div class="relative h-48 overflow-hidden">
-                        <?php if ($work['thumbnail']): ?>
-                            <img src="<?= get_thumbnail_url($work['thumbnail']) ?>" 
-                                 alt="<?= esc($work['title']) ?>"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        <?php else: ?>
-                            <div class="w-full h-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
-                                <i class="fas fa-image text-white text-3xl"></i>
-                            </div>
-                        <?php endif; ?>
+                        <?= renderWorkThumbnail($work, 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300') ?>
                         
                         <!-- Category Badge -->
                         <div class="absolute top-3 left-3">
@@ -221,7 +158,7 @@
                         
                         <!-- Hover Overlay -->
                         <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
-                            <a href="<?= site_url('/karya/' . $work['slug']) ?>" 
+                            <a href="<?= base_url('/karya/' . $work['slug']) ?>" 
                                class="bg-white text-gray-900 px-4 py-2 rounded-lg font-semibold opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
                                 <i class="fas fa-eye mr-2"></i>Lihat Detail
                             </a>

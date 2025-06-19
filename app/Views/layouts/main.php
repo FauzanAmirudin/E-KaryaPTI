@@ -6,6 +6,10 @@
     <title><?= $title ?? 'eKarya PTI' ?> - Platform Galeri Karya Mahasiswa</title>
     <meta name="description" content="<?= $description ?? 'Platform galeri karya mahasiswa Program Teknologi Informasi' ?>">
     
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="<?= csrf_hash() ?>">
+    <meta name="csrf-header" content="<?= csrf_header() ?>">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>

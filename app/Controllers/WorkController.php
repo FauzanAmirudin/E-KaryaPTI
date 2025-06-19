@@ -150,9 +150,12 @@ class WorkController extends BaseController
             'category_id' => $this->request->getPost('category_id'),
         ];
 
+        // Use the existing file_type if not provided in the request
         $fileType = $this->request->getPost('file_type');
         if ($fileType) {
             $data['file_type'] = $fileType;
+        } else {
+            $data['file_type'] = $work['file_type']; // Use existing file_type from the database
         }
 
         // Handle external link
@@ -164,7 +167,9 @@ class WorkController extends BaseController
 
         // Handle file replacement if new file uploaded
         $file = $this->request->getFile('file');
-        if ($file && $file->isValid()) {
+        $fileIsValid = !empty($file) && $file->isValid();
+        
+        if ($fileIsValid) {
             // Delete old file
             if ($work['file_path']) {
                 $this->fileUpload->deleteFile($work['file_path'], $work['thumbnail']);
@@ -182,8 +187,11 @@ class WorkController extends BaseController
             }
         }
         
-        // Validasi jika tipe upload file namun tidak ada file maupun link external
-        if ($data['file_type'] === 'file' && !$file->isValid() && empty($externalLink) && empty($work['file_path']) && empty($work['external_link'])) {
+        // If we're updating a work that already has a file path or external link, we don't need to validate
+        $hasExistingFile = !empty($work['file_path']) || !empty($work['external_link']);
+        
+        // Only validate if there's no existing file and no new file/link is provided
+        if ($data['file_type'] === 'file' && !$hasExistingFile && !$fileIsValid && empty($externalLink)) {
             return redirect()->back()->with('error', 'Harap unggah file atau berikan link eksternal')->withInput();
         } else if ($data['file_type'] === 'link' && empty($externalLink) && empty($work['external_link'])) {
             return redirect()->back()->with('error', 'Link eksternal wajib diisi')->withInput();

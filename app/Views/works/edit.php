@@ -16,6 +16,8 @@
         <form action="<?= site_url('/karya/update/' . $work['id']) ?>" method="POST" enctype="multipart/form-data" 
               class="space-y-8" x-data="editForm()" @submit="handleSubmit">
             <?= csrf_field() ?>
+            <!-- Hidden field for file_type -->
+            <input type="hidden" name="file_type" value="<?= $work['file_type'] ?>">
             
             <!-- Basic Information -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
